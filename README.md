@@ -1,14 +1,13 @@
-# gulp-jsoncombine
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]  [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
+# gulp-jsoncombine-array
 
-> jsoncombine plugin for [gulp](https://github.com/wearefractal/gulp)
+> jsoncombine-array plugin for [gulp](https://github.com/gulpjs/gulp)
 
 ## Usage
 
-First, install `gulp-jsoncombine` as a dependency:
+First, install `gulp-jsoncombine-array` as a dependency:
 
 ```shell
-npm install --save-dev gulp-jsoncombine
+npm install --save-dev gulp-jsoncombine-array
 ```
 
 Then, add it to your `gulpfile.js`:
@@ -16,16 +15,22 @@ Then, add it to your `gulpfile.js`:
 ** This plugin will collect all the json files provided to it, parse them, put them in a dictionary where the keys of that dictionary are the filenames (sans the '.json' suffix) and pass that to a processor function. That function decides how that output should look in the resulting file. **
 
 ```javascript
-var jsoncombine = require("gulp-jsoncombine");
+var gulp = require('gulp');
+var jsoncombinearray = require("gulp-jsoncombine-array");
 
-gulp.src("./src/*.json")
-	.pipe(jsoncombine("result.js",function(data, meta){...}))
-	.pipe(gulp.dest("./dist"));
+gulp.task('default', function(callback) {
+	return gulp.src("./*.json")
+		.pipe(jsoncombinearray("all-things.json",function(dataArray) {
+			// do any work on data here
+			return new Buffer(JSON.stringify(dataArray));
+		}))
+		.pipe(gulp.dest("./output"));
+});
 ```
 
 ## API
 
-### jsoncombine(fileName, processor)
+### jsoncombine-array(fileName, processor)
 
 #### fileName
 Type: `String`  
@@ -35,9 +40,9 @@ The output filename
 #### processor
 Type: `Function`  
 
-The processor function will be called with two dictionaries holding the same set of keys. The keys are the filename sans the `.json` suffix of a file in the gulp stream.
+The processor function will be called with two parameters.
 
-The first dictionary maps the filename to the string contents of the file. The second dictionary maps to a meta object containing the following keys:
+The first parameter is json array of the string contents of the file. The second parameter maps to a meta object containing the following keys:
 
 * `cwd` The working directory
 * `base` The base path
@@ -48,15 +53,3 @@ The function should return a new `Buffer` that would be written to the output fi
 ## License
 
 [MIT License](http://en.wikipedia.org/wiki/MIT_License)
-
-[npm-url]: https://npmjs.org/package/gulp-jsoncombine
-[npm-image]: https://badge.fury.io/js/gulp-jsoncombine.png
-
-[travis-url]: http://travis-ci.org/reflog/gulp-jsoncombine
-[travis-image]: https://secure.travis-ci.org/reflog/gulp-jsoncombine.png?branch=master
-
-[coveralls-url]: https://coveralls.io/r/reflog/gulp-jsoncombine
-[coveralls-image]: https://coveralls.io/repos/reflog/gulp-jsoncombine/badge.png
-
-[depstat-url]: https://david-dm.org/reflog/gulp-jsoncombine
-[depstat-image]: https://david-dm.org/reflog/gulp-jsoncombine.png
